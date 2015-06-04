@@ -284,7 +284,8 @@ bkcore.hexgl.HexGL.prototype.initRenderer = function()
 {
 	var renderer = new THREE.WebGLRenderer({
 		antialias: false,
-		clearColor: 0x000000
+		clearColor: 0x000000,
+		stencil: false
 	});
 
 	// desktop + quality mid or high
