@@ -72,6 +72,8 @@ bkcore.hexgl.HexGL = function(opts)
 
 	this.gameplay = null;
 
+	this.stats = null;
+
 	this.composers = {
 		game: null
 	};
@@ -130,6 +132,9 @@ bkcore.hexgl.HexGL.prototype.restart = function()
 bkcore.hexgl.HexGL.prototype.update = function()
 {
 	if(!this.active) return;
+
+	// if( this.stats )
+	this.stats.update();
 
 	if(this.gameplay != null)
 		this.gameplay.update();
@@ -306,6 +311,13 @@ bkcore.hexgl.HexGL.prototype.initRenderer = function()
 	this.canvas = renderer.domElement;
 	this.renderer = renderer;
 	this.manager = new bkcore.threejs.RenderManager(renderer);
+
+	var stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.top = '0px';
+
+	this.containers.main.appendChild( stats.domElement );
+	this.stats = stats;
 }
 
 bkcore.hexgl.HexGL.prototype.initHUD = function()
