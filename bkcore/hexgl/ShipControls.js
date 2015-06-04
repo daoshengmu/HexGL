@@ -120,7 +120,8 @@ bkcore.hexgl.ShipControls = function(ctx)
 
 	this.touchController = null;
 	this.orientationController = null;
-	this.gamepadController = null
+	this.gamepadController = null;
+	this.tvTunerController = null;
 
 	if(ctx.controlType == 1 && bkcore.controllers.TouchController.isCompatible())
 	{
@@ -153,6 +154,18 @@ bkcore.hexgl.ShipControls = function(ctx)
 					self.key.forward = false;
 				else
 					self.key.forward = true;
+			});
+	}
+	else if(ctx.controlType == 5 && bkcore.controllers.TVTunerController.isCompatible())
+	{
+		this.tvTunerController = new bkcore.controllers.TVTunerController(
+			domElement, 
+			function(controller){
+				self.key.forward = controller.forward;
+				self.key.ltrigger = controller.ltrigger;
+				self.key.rtrigger = controller.rtrigger;
+				self.key.left = controller.left;
+				self.key.right = controller.right;
 			});
 	}
 	else if(ctx.controlType == 3 && bkcore.controllers.GamepadController.isCompatible())
@@ -288,8 +301,10 @@ bkcore.hexgl.ShipControls = function(ctx)
 		}
 	};
 
-	domElement.addEventListener('keydown', onKeyDown, false);
-	domElement.addEventListener('keyup', onKeyUp, false);
+	if(ctx.controlType != 5 || !bkcore.controllers.TVTunerController.isCompatible()) {
+		domElement.addEventListener('keydown', onKeyDown, false);
+		domElement.addEventListener('keyup', onKeyUp, false);
+	}	
 };
 
 bkcore.hexgl.ShipControls.prototype.control = function(threeMesh)
