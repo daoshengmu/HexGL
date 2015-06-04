@@ -35,13 +35,13 @@
 
       switch(event.keyCode)
       {
-        case 50: /*up*/ this.forward = true; break;
+        case 50: case 98: /*up*/ this.forward = true; break;
 
-        case 56: /*down*/this.backward = true; break;
+        case 56: case 104: /*down*/this.backward = true; break;
 
-        case 52: /*left*/this.left = true; break;
+        case 52: case 100: /*left*/this.left = true; break;
 
-        case 54: /*right*/this.right = true; break;
+        case 54: case 102: /*right*/this.right = true; break;
 
         // case 81: /*Q*/this.ltrigger = true; break;
         // case 65: /*A*/this.ltrigger = true; break;
@@ -57,13 +57,13 @@
 
       switch(event.keyCode)
       {
-        case 50: /*up*/ this.forward = false; break;
+        case 50: case 98:/*up*/ this.forward = false; break;
 
-        case 56: /*down*/this.backward = false; break;
+        case 56: case 104:/*down*/this.backward = false; break;
 
-        case 52: /*left*/this.left = false; break;
+        case 52: case 100:/*left*/this.left = false; break;
 
-        case 54: /*right*/this.right = false; break;
+        case 54: case 102:/*right*/this.right = false; break;
 
         // case 81: /*Q*/this.ltrigger = false; break;
         // case 65: /*A*/this.ltrigger = false; break;
