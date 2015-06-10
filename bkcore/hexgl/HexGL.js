@@ -133,13 +133,18 @@ bkcore.hexgl.HexGL.prototype.update = function()
 {
 	if(!this.active) return;
 
-	// if( this.stats )
-	this.stats.update();
+	if( this.stats ) {
+		this.stats.begin();
+	}
 
 	if(this.gameplay != null)
 		this.gameplay.update();
 
 	this.manager.renderCurrent();
+
+	if( this.stats ) {
+		this.stats.end();
+	}
 }
 
 bkcore.hexgl.HexGL.prototype.init = function()
