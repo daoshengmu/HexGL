@@ -8,6 +8,7 @@
 		"128": "/icon_128.png",
 		"256": "/icon_256.png"
 	},
+	"fullscreen": true,
 	"developer": {
 		"name": "Thibaut Despoulain (BKcore)",
 		"url": "http://bkcore.com"

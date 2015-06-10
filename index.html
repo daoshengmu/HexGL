@@ -30,6 +30,14 @@
       }
     </style>
     <script type="text/javascript">
+
+    if (navigator.mozApps) {
+      navigator.mozApps.install('manifest.webapp');
+      alert('installed');
+    } else {
+      alert('no install');
+    }
+
     //analytics
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-26274524-4']);
@@ -100,6 +108,7 @@
     <script src="bkcore.coffee/controllers/TouchController.js"></script>
     <script src="bkcore.coffee/controllers/OrientationController.js"></script>
     <script src="bkcore.coffee/controllers/GamepadController.js"></script>
+    <script src="bkcore.coffee/controllers/TVTunerController.js"></script>
 
     <script src="bkcore.coffee/Timer.js"></script>
     <script src="bkcore.coffee/ImageData.js"></script>
