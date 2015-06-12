@@ -393,7 +393,7 @@ bkcore.hexgl.HexGL.prototype.initGameComposer = function()
 	// desktop + quality low, mid or high
 	// OR
 	// mobile + quality mid or high
-	if(this.quality > 0)
+	if(this.quality > 2)
 		this.composers.game.addPass( effectHex );
 	else
 		this.composers.game.addPass( effectScreen );
