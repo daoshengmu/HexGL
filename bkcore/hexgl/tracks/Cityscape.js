@@ -337,10 +337,14 @@ bkcore.hexgl.tracks.Cityscape = {
 		this.analyser = this.lib.get("analysers", "track.cityscape.collision");
 
 		// SKYBOX
-		var sceneCube = new THREE.Scene();
+		//var sceneCube = new THREE.Scene();
 
 		var cameraCube = new THREE.PerspectiveCamera( 70, ctx.width / ctx.height, 1, 6000 );
-		sceneCube.add( cameraCube );
+		var camera = new THREE.PerspectiveCamera( 70, ctx.width / ctx.height, 1, 60000 );
+
+		var scene = new THREE.Scene();
+
+		scene.add( camera );
 
 		var skyshader = THREE.ShaderUtils.lib[ "cube" ];
 		skyshader.uniforms[ "tCube" ].texture = this.lib.get("texturesCube", "skybox.dawnclouds");
@@ -353,20 +357,17 @@ bkcore.hexgl.tracks.Cityscape = {
 			depthWrite: false
 		});
 
-		var mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), skymaterial );
+		var mesh = new THREE.Mesh( new THREE.CubeGeometry( 10000, 10000, 10000 ), skymaterial );
 		mesh.flipSided = true;
 
-		sceneCube.add(mesh);
+		scene.add(mesh);
 
-		ctx.manager.add("sky", sceneCube, cameraCube);
+		//ctx.manager.add("sky", scene, camera);
 
 		var ambient = 0xbbbbbb, diffuse = 0xffffff, specular = 0xffffff, shininess = 42, scale = 23;
 
 		// MAIN SCENE
-		var camera = new THREE.PerspectiveCamera( 70, ctx.width / ctx.height, 1, 60000 );
-
-		var scene = new THREE.Scene();
-		scene.add( camera );
+		//scene.add( camera );
 		scene.add( new THREE.AmbientLight( ambient ) );
 
 		// SUN
@@ -418,7 +419,7 @@ bkcore.hexgl.tracks.Cityscape = {
 		// when it wasn't before; this is because this booster setting
 		// is the only difference between mobile + mid quality
 		// and desktop + low quality, so I merged them for convenience
-		if(quality > 0)
+		if(quality > 1) // add point light while quality is high.
 			ship.add(boosterLight);
 
 		// SHIP CONTROLS
@@ -468,7 +469,7 @@ bkcore.hexgl.tracks.Cityscape = {
 		ctx.components.cameraChase = new bkcore.hexgl.CameraChase({
 			target: ship,
 			camera: camera,
-			cameraCube: ctx.manager.get("sky").camera,
+			cameraCube: cameraCube, //ctx.manager.get("sky").camera,
 			lerp: 0.5,
 			yoffset: 8.0,
 			zoffset: 10.0,
@@ -496,7 +497,8 @@ bkcore.hexgl.tracks.Cityscape = {
 			c.lookAt(this.objects.components.shipControls.dummy.position);
 			this.objects.components.cameraChase.cameraCube.rotation.copy(c.rotation);*/
 
-			this.objects.composers.game.render(dt);
+			renderer.render( scene, camera );
+			// this.objects.composers.game.render(dt);
 			if(this.objects.hud) this.objects.hud.update(
 				this.objects.components.shipControls.getRealSpeed(100),
 				this.objects.components.shipControls.getRealSpeedRatio(),

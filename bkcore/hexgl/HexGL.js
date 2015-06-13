@@ -342,6 +342,8 @@ bkcore.hexgl.HexGL.prototype.initHUD = function()
 
 bkcore.hexgl.HexGL.prototype.initGameComposer = function()
 {
+	return;
+	
 	var renderTargetParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
 	var renderTarget = new THREE.WebGLRenderTarget( this.width, this.height, renderTargetParameters );
 
@@ -366,8 +368,8 @@ bkcore.hexgl.HexGL.prototype.initGameComposer = function()
 
 	effectHex.renderToScreen = true;
 
-	this.composers.game.addPass( renderSky );
-	this.composers.game.addPass( renderModel );
+	//this.composers.game.addPass( renderSky );
+	//this.composers.game.addPass( renderModel );
 
 	// if(this.quality > 0 && !this.mobile)
 	// {
@@ -381,22 +383,22 @@ bkcore.hexgl.HexGL.prototype.initGameComposer = function()
 	// }
 	
 	// desktop + quality mid or high
-	if(this.quality > 2)
-	{
-		var effectBloom = new THREE.BloomPass( 0.8, 25, 4 , 256);
+	// if(this.quality > 2)
+	// {
+	// 	var effectBloom = new THREE.BloomPass( 0.8, 25, 4 , 256);
 
-		this.composers.game.addPass( effectBloom );
+	// 	this.composers.game.addPass( effectBloom );
 
-		this.extras.bloom = effectBloom;
-	}
+	// 	this.extras.bloom = effectBloom;
+	// }
 
 	// desktop + quality low, mid or high
 	// OR
 	// mobile + quality mid or high
-	if(this.quality > 2)
-		this.composers.game.addPass( effectHex );
-	else
-		this.composers.game.addPass( effectScreen );
+	// if(this.quality > 2)
+	// 	this.composers.game.addPass( effectHex );
+	// else
+	// 	this.composers.game.addPass( effectScreen );
 }
 
 bkcore.hexgl.HexGL.prototype.createMesh = function(parent, geometry, x, y, z, mat)
