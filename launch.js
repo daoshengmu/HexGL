@@ -10,8 +10,8 @@
     var hexGL, progressbar;
     hexGL = new bkcore.hexgl.HexGL({
       document: document,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: 1280,
+      height: 720,
       container: $('main'),
       overlay: $('overlay'),
       gameover: $('step-5'),
@@ -112,5 +112,10 @@
       return $('step-2').style.backgroundImage = "url(css/help-" + s[0][3] + ".png)";
     };
   }
+
+  // Jump to the game
+  $('step-1').style.display = 'none';
+  $('step-2').style.display = 'block';
+  init(0, 1, s[2][3], s[3][3]);
 
 }).call(this);
