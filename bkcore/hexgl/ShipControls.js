@@ -362,6 +362,30 @@ bkcore.hexgl.ShipControls.prototype.destroy = function()
 	this.collision.front = false;
 	this.collision.left = false;
 	this.collision.right = false;
+
+	this.dom.addEventListener('keydown', destroyKeyDown, false);
+	this.dom.addEventListener('keyup', destroyKeyUp, false);
+
+	var dom = this.dom;
+	function destroyKeyDown(event) {
+		switch(event.keyCode)
+		{
+			case KeyEvent.DOM_VK_RETURN:
+				dom.removeEventListener('keydown', destroyKeyDown);
+				window.location.reload();
+			break;
+		}
+	};
+
+	function destroyKeyUp(event) {
+		switch(event.keyCode)
+		{
+			case KeyEvent.DOM_VK_RETURN:
+				dom.removeEventListener('keyup', destroyKeyUp);
+				window.location.reload();
+			break;
+		}
+	};
 }
 
 bkcore.hexgl.ShipControls.prototype.fall = function()
