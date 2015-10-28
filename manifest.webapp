@@ -2,6 +2,7 @@
 	"name": "HexGL",
 	"description": "HexGL v1.0.1-ffos",
 	"launch_path": "/index.html",
+	"type": "privileged",
 	"icons": {
 		"32": "/icon_32.png",
 		"64": "/icon_64.png",
@@ -12,6 +13,11 @@
 	"developer": {
 		"name": "Thibaut Despoulain (BKcore)",
 		"url": "http://bkcore.com"
+	},
+	"permissions" : {
+	  "tcp-socket" : {
+	    "description" : "Create TCP sockets and communicate over them."
+	  }
 	},
     "installs_allowed_from": ["*"],
 	"default_locale": "en",

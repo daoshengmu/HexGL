@@ -116,6 +116,6 @@
   // Jump to the game
   $('step-1').style.display = 'none';
   $('step-2').style.display = 'block';
-  init(0, 1, s[2][3], s[3][3]);
+  init(5, 1, s[2][3], s[3][3]);
 
 }).call(this);

@@ -447,6 +447,24 @@ bkcore.hexgl.ShipControls.prototype.update = function(dt)
 			angularAmount += this.leapBridge.palmNormal[0] * 2 * this.angularSpeed * dt;
 			this.speed += Math.max(0.0, (0.5 + this.leapBridge.palmNormal[2])) * 3 * this.thrust * dt;
 		}
+		else if (this.tvTunerController != null) 
+		{
+			// For key event
+			if(this.key.left)
+			{
+				angularAmount += this.angularSpeed * dt;
+				rollAmount -= this.rollAngle;
+			}
+			if(this.key.right)
+			{
+				angularAmount -= this.angularSpeed * dt;
+				rollAmount += this.rollAngle;
+			}
+
+			// For touch event
+			angularAmount -= this.tvTunerController.stickVector.x/100 * this.angularSpeed * dt;
+			rollAmount += this.tvTunerController.stickVector.x/100 * this.rollAngle;
+		}
 		else
 		{
 			if(this.key.left)

@@ -12,7 +12,7 @@
   var self;
 
   TVTunerController = (function() {
-   
+
     TVTunerController.isCompatible = function() {
       return true;
     };
@@ -25,23 +25,26 @@
     function TVTunerController(domElement, keyPressCallback) {
       self = this;
       this.keyPressCallback = keyPressCallback;
+      this.stickVector = { x: 0, y: 0 };
       this.active = true;
 
       domElement.addEventListener('keydown', onKeyDown, false);
       domElement.addEventListener('keyup', onKeyUp, false);
+
+      constructSocketListen();
     }
 
     function onKeyDown(event) {
 
       switch(event.keyCode)
       {
-        case 50: case 98: /*up*/ this.forward = true; break;
+        case 50: case 98: case 38: /*up*/ this.forward = true; break;
 
-        case 56: case 104: /*down*/this.backward = true; break;
+        case 56: case 104: case 40: /*down*/this.backward = true; break;
 
-        case 52: case 100: /*left*/this.left = true; break;
+        case 52: case 100: case 37: /*left*/this.left = true; break;
 
-        case 54: case 102: /*right*/this.right = true; break;
+        case 54: case 102: case 39: /*right*/this.right = true; break;
 
         // case 81: /*Q*/this.ltrigger = true; break;
         // case 65: /*A*/this.ltrigger = true; break;
@@ -57,13 +60,13 @@
 
       switch(event.keyCode)
       {
-        case 50: case 98:/*up*/ this.forward = false; break;
+        case 50: case 98: case 38:/*up*/ this.forward = false; break;
 
-        case 56: case 104:/*down*/this.backward = false; break;
+        case 56: case 104: case 40:/*down*/this.backward = false; break;
 
-        case 52: case 100:/*left*/this.left = false; break;
+        case 52: case 100: case 37:/*left*/this.left = false; break;
 
-        case 54: case 102:/*right*/this.right = false; break;
+        case 54: case 102: case 39:/*right*/this.right = false; break;
 
         // case 81: /*Q*/this.ltrigger = false; break;
         // case 65: /*A*/this.ltrigger = false; break;
@@ -75,34 +78,50 @@
       self.keyPressCallback(this);
     }
 
-    /*
-      @public
-    */
-    // TVTunerController.prototype.updateAvailable = function() {
-    //   var accel, gamepads, gp, lt, rt, sel, _ref, _ref1, _ref2, _ref3;
-    //   if (!this.active) {
-    //     return false;
-    //   }
-    //   gamepads = navigator.getGamepads ? navigator.getGamepads() : navigator.webkitGetGamepads();
-    //   if (!(gamepads != null ? gamepads[0] : void 0)) {
-    //     return false;
-    //   }
-    //   gp = gamepads[0];
-    //   if ((gp.buttons == null) || (gp.axes == null)) {
-    //     return;
-    //   }
-    //   this.lstickx = gp.axes[0];
-    //   accel = gp.buttons[0];
-    //   lt = gp.buttons[6];
-    //   rt = gp.buttons[7];
-    //   sel = gp.buttons[8];
-    //   this.acceleration = (_ref = accel.pressed) != null ? _ref : accel;
-    //   this.ltrigger = (_ref1 = lt.pressed) != null ? _ref1 : lt;
-    //   this.rtrigger = (_ref2 = rt.pressed) != null ? _ref2 : rt;
-    //   this.select = (_ref3 = sel.pressed) != null ? _ref3 : sel;
-    //   this.keyPressCallback(this);
-    //   return true;
-    // };
+    // Reload window we need to reconnect the connection?
+    function constructSocketListen() {
+      var socketListener = navigator.mozTCPSocket.listen(8088);
+
+      socketListener.onconnect = function(evt) {
+        var success = "HANDSHAKE,Connect to server success.";
+
+        console.log("connect success...");
+        evt.socket.send(success);
+        evt.socket.ondata = socketReceive;
+      }
+    }
+
+    function socketReceive(evt) {
+      if (typeof evt.data !== 'string') {
+        return;
+      }
+
+      var data = evt.data.split(",");
+      switch(data[0]) {
+
+        case 'MOVE':
+          console.log("Receive MOVE event");
+          console.log("MOVE data " + data[1] + ", " + data[2]);
+          self.stickVector.x = data[1];
+          self.stickVector.y = data[2];
+        break;
+
+        case 'FORWARD':
+
+          if (data[1] === '1') {
+            console.log("Receive FORWARD event");
+            this.forward = true;
+          }
+          else if (data[1] === '0') {
+            console.log("Receive STOP event");
+            this.forward = false;
+          }
+
+          self.keyPressCallback(this);
+
+        break;
+      }
+    }
 
     return TVTunerController;
 
