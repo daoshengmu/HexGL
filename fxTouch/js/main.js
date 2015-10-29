@@ -2,9 +2,11 @@
 // TODO: 1. To setup connection while server reload 2. ip insert via app.
 
 function runClient() {
-	var socket = navigator.mozTCPSocket.open('192.168.137.101', 8088);
+	var ipAddress = '10.247.35.170';
+	var port = 8088;
+	var socket = navigator.mozTCPSocket.open(ipAddress, port);
 	var isConnected = false;
-	var connectedSocket = null; // replace it with socket?
+	var connectSocket = null; // replace it with socket?
 	var active = true;
 	var stickMargin = 0;
 	var stickID = -1;
@@ -12,35 +14,10 @@ function runClient() {
 	var stickStartPos = new Vec2(0, 0);
 	var stickVector = new Vec2(0, 0);
 
-	socket.ondata = function (evt) {
-
-		stickMargin = window.innerWidth * 0.5;
-		document.getElementById("text").innerHTML += evt.data + "\n";
-
-		if (typeof evt.data !== 'string') {
-			return;
-		}
-
-		data = evt.data.split(',');
-		var ack;
-
-		switch(data[0]) {
-			case 'HANDSHAKE':
-			connectedSocket = evt.target;
-			ack = 'ACK,from ' + socket.host;
-			active = true;
-			break;
-		}
-
-		evt.target.send(data);	// target is server socket.
-	}
-
-	socket.onopen = function() { 
-		document.getElementById("text").innerHTML = "got client open\n";
-		console.log("got client open"); 
-		console.log("stickMargin is " + stickMargin);
-		isConnected = true;
-	}
+	socket.ondata = socketOnData;
+	socket.onopen = socketOnOpen;
+	socket.onclose = socketOnClose;
+	socket.onerror = socketOnError;
 
 	window.addEventListener('touchstart', function(evt) {
 		touchStart(evt);
@@ -53,6 +30,70 @@ function runClient() {
 	window.addEventListener('touchend', function(evt) {
 		touchEnd(evt);
 	}, false);
+
+	function socketOnData(evt) {
+		stickMargin = window.innerWidth * 0.5;
+		document.getElementById("text").innerHTML += evt.data + "\n";
+
+		if (typeof evt.data !== 'string') {
+			return;
+		}
+
+		data = evt.data.split(',');
+
+		switch(data[0]) {
+			case 'HANDSHAKE':
+
+				if (retryConnection) {	// clear retry connection.
+					clearInterval(retryConnection);
+				}
+
+				connectSocket = evt.target;
+				console.log('connect from ' + socket.host);
+				active = true;
+			break;
+
+			case 'BYE':
+				connectSocket = null;
+				active = false;
+				socket.close();
+				return;
+			break;
+		}
+
+		evt.target.send(data);	// target is server socket.
+	}
+
+	function socketOnOpen(evt) {
+		document.getElementById("text").innerHTML = "got client open\n";
+		console.log("got client open"); 
+		console.log("stickMargin is " + stickMargin);
+		isConnected = true;
+	}
+
+	var retryConnection = null;
+
+	function socketOnClose(evt) {
+		// Retry connnect to server
+		retryConnection = setInterval( function() {
+		 	retrySocket();			
+		}, 3000 );
+
+		function retrySocket() {
+			socket = navigator.mozTCPSocket.open(ipAddress, port);
+			socket.ondata = socketOnData;
+			socket.onopen = socketOnOpen;
+			socket.onclose = socketOnClose;
+			socket.onerror = socketOnError;
+
+			clearInterval(retryConnection);
+			retryConnection = null;			
+		}
+	}
+
+	function socketOnError(evt) {
+		console.error(evt.data);
+	}
 
 	function touchStart(evt) {
 
@@ -138,7 +179,12 @@ function runClient() {
 	}
 
 	function sendDataToServer(data) {
-		connectedSocket.send(data);
+		if (connectSocket)
+			connectSocket.send(data);
+	}
+
+	function reconnectToServer() {
+		socket = navigator.mozTCPSocket.open('10.247.35.170', 8088);
 	}
 }
 

@@ -367,11 +367,19 @@ bkcore.hexgl.ShipControls.prototype.destroy = function()
 	this.dom.addEventListener('keyup', destroyKeyUp, false);
 
 	var dom = this.dom;
+	var tvTunerController = this.tvTunerController;
+	tvTunerController.destroy();
+	
 	function destroyKeyDown(event) {
 		switch(event.keyCode)
 		{
 			case KeyEvent.DOM_VK_RETURN:
 				dom.removeEventListener('keydown', destroyKeyDown);
+
+				if (tvTunerController != null) {
+					tvTunerController.closeConnection();
+				}
+
 				window.location.reload();
 			break;
 		}
@@ -382,6 +390,11 @@ bkcore.hexgl.ShipControls.prototype.destroy = function()
 		{
 			case KeyEvent.DOM_VK_RETURN:
 				dom.removeEventListener('keyup', destroyKeyUp);
+
+				if (tvTunerController != null) {
+					tvTunerController.closeConnection();
+				}
+
 				window.location.reload();
 			break;
 		}

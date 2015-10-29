@@ -10,8 +10,12 @@
 (function() {
   var TVTunerController, exports, _base;
   var self;
+  var socketListener;
 
   TVTunerController = (function() {
+
+    var sockets = [];
+    var isDestroy = false;
 
     TVTunerController.isCompatible = function() {
       return true;
@@ -20,8 +24,6 @@
     /*
       Creates a new TVTuner
     */
-
-
     function TVTunerController(domElement, keyPressCallback) {
       self = this;
       this.keyPressCallback = keyPressCallback;
@@ -32,6 +34,20 @@
       domElement.addEventListener('keyup', onKeyUp, false);
 
       constructSocketListen();
+    }
+
+    TVTunerController.prototype.destroy = function() {
+      isDestroy = true;
+    }
+
+    TVTunerController.prototype.closeConnection = function() {
+      sockets.forEach(function(s) {
+        var data = 'BYE';
+        s.send(data);
+      });
+
+      sockets = [];
+      socketListener.close();
     }
 
     function onKeyDown(event) {
@@ -80,21 +96,26 @@
 
     // Reload window we need to reconnect the connection?
     function constructSocketListen() {
-      var socketListener = navigator.mozTCPSocket.listen(8088);
+      socketListener = navigator.mozTCPSocket.listen(8088);
 
-      socketListener.onconnect = function(evt) {
-        var success = "HANDSHAKE,Connect to server success.";
+      socketListener.onconnect = socketConnect;
+     // socketListener.onclose = socketClose;  // No onclose on TV
+    }
 
-        console.log("connect success...");
+    function socketConnect(evt) {
+      var success = "HANDSHAKE,Connect to server success.";
 
-        if (evt.socket !== undefined) {
-          evt.socket.send(success);
-          evt.socket.ondata = socketReceive;
-        } 
-        else {  // On TV b2g 2.2, socket is undefined.
-          evt.send(success);
-          evt.ondata = socketReceive;
-        }
+      console.log("connect success...");
+
+      if (evt.socket !== undefined) {
+        sockets.push(evt.socket);
+        evt.socket.send(success);
+        evt.socket.ondata = socketReceive;
+      } 
+      else {  // On TV b2g 2.2, socket is undefined.
+        sockets.push(evt);
+        evt.send(success);
+        evt.ondata = socketReceive;
       }
     }
 
@@ -115,6 +136,12 @@
 
         case 'FORWARD':
 
+          if (isDestroy) {
+            self.closeConnection();
+            isDestroy = false;
+            window.location.reload();
+          }
+
           if (data[1] === '1') {
             console.log("Receive FORWARD event");
             this.forward = true;
@@ -128,6 +155,10 @@
 
         break;
       }
+    }
+
+    function socketClose(evt) {
+      console.log("socket is closed....");
     }
 
     return TVTunerController;
