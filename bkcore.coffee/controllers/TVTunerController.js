@@ -86,8 +86,15 @@
         var success = "HANDSHAKE,Connect to server success.";
 
         console.log("connect success...");
-        evt.socket.send(success);
-        evt.socket.ondata = socketReceive;
+
+        if (evt.socket !== undefined) {
+          evt.socket.send(success);
+          evt.socket.ondata = socketReceive;
+        } 
+        else {  // On TV b2g 2.2, socket is undefined.
+          evt.send(success);
+          evt.ondata = socketReceive;
+        }
       }
     }
 
