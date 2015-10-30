@@ -206,7 +206,7 @@ Vec2 = (function() {
 function InitialStage() {
 	var ipAddress = document.getElementById('ipAddress').value;
 	var socket = null;
-	var network = new NetworkStage();
+	var network = new NetworkStage(this);
 
 	this.connectToServer = function() {
 		network.setupConnection(ipAddress);
@@ -214,11 +214,16 @@ function InitialStage() {
 	}
 
 	this.showStage = function() {
-
-	}
-
-	this.hideStage = function() {
+		var s = document.getElementsByClassName('initialStage');
+		var i;
+		for (i = 0; i < s.length; i++) {
+			s[i].style.display = 'block';
+		}
 		
+		s = document.getElementsByClassName('gameStage');
+		for (i = 0; i < s.length; i++) {
+			s[i].style.display = 'none';
+		}
 	}
 
 	this.logMessage = function(log) {
@@ -228,7 +233,7 @@ function InitialStage() {
 };
 
 // Handle network connection
-function NetworkStage() {
+function NetworkStage(initStage) {
 
 	var ipAddress = '';
 	var port = 8088;
@@ -236,6 +241,7 @@ function NetworkStage() {
 	var isConnected = false;
 	var active = false;
 	var self = this;
+	var initialStage = initStage;
 
 	this.logOnInitial = null;
 
@@ -271,6 +277,7 @@ function NetworkStage() {
 				active = true;
 				isConnected = true;
 				game = new GameStage();
+				game.showStage();
 				game.init(sendDataToServer);
 			break;
 
@@ -313,6 +320,7 @@ function NetworkStage() {
 		if (!active)
 			return; // Initial connect fail. Don't do retry
 
+		initialStage.showStage();
 		self.logOnInitial("retry connection......\n");
 		retryConnection = setInterval( function() {
 		 	retrySocket();			
@@ -331,6 +339,7 @@ function NetworkStage() {
 	}
 
 	function socketOnError(evt) {
+		initialStage.showStage();
 		console.error(evt.type + ': ' + evt.name);
 		self.logOnInitial(evt.type + ': ' + evt.name);
 		evt.target.close();
@@ -370,11 +379,16 @@ function GameStage() {
 	}
 
 	this.showStage = function() {
-
-	}
-
-	this.hideStage = function() {
+		var s = document.getElementsByClassName('gameStage');
+		var i;
+		for (i = 0; i < s.length; i++) {
+			s[i].style.display = 'block';
+		}
 		
+		s = document.getElementsByClassName('initialStage');
+		for (i = 0; i < s.length; i++) {
+			s[i].style.display = 'none';
+		}
 	}
 
 	function deviceOrientation(evt) {
@@ -428,6 +442,7 @@ function runGame() {
 		// disconnect -> remove listen, close sockets -> back to initial stage
 	// Fail -> close socket.
 	var initialStage = new InitialStage();
+	initialStage.showStage();
 	initialStage.connectToServer();
 }
 

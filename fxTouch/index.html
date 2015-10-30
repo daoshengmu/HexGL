@@ -9,8 +9,7 @@
       html, body {
         background-size: 100% auto;
         background-repeat: no-repeat;
-        background-color: white;
-       /* background-image: url(img/control.png);*/
+        background-color: black;
       }
 
       .unselect {
@@ -21,18 +20,78 @@
         -ms-user-select: none;
         user-select: none;
       }
+
+      .title {
+        font-size: 1.5em;
+        color: white;
+      }
+
+      .log {
+        font-size: 1.0em;
+        color: white;
+      }
+
+      .btn {
+        background-color:#44c767;
+        -moz-border-radius:14px;
+        -webkit-border-radius:14px;
+        border-radius:14px;
+        border:1px solid #18ab29;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:17px;
+        padding:8px 15px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #2f6627;
+      }
+      .btn:hover {
+        background-color:#5cbf2a;
+      }
+      .btn:active {
+        position:relative;
+        top:1px;
+      }
+
+      .resizedTextbox {
+        width: 280px; height: 1.6em; padding: 1px;
+        font-size: 1.4em;
+        overflow: hidden;
+      }
+
+      .initialStage {
+        display: block;
+      }
+
+      div.gameStage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("img/control.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: none;
+      }
+
+      #insertBox {
+        overflow: hidden;
+      }
     </style>
 
     <script src="js/main.js"></script>
   </head>
 
   <body>
-
-    <p id="text"></p>
-    Server IP: <input type="text" id="ipAddress" value="0.0.0.0">
-    <p class="unselect">Please insert the ip address of the server.</p>
-    <button id="enterBtn">Enter</button>
-
+    <p class="initialStage unselect title">Server IP: </p>
+    <div id="insertBox">
+      <input class="initialStage resizedTextbox" type="text" id="ipAddress" value="0.0.0.0">
+      <button class="initialStage btn" id="enterBtn">Enter</button>
+    </div>
+    <p class="initialStage unselect log" id="text"></p>
+    <div class="gameStage unselect"></div>
   </body>
 
 </html>
