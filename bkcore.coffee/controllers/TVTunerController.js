@@ -28,6 +28,7 @@
       self = this;
       this.keyPressCallback = keyPressCallback;
       this.stickVector = { x: 0, y: 0 };
+      this.beta = 0;
       this.active = true;
 
       domElement.addEventListener('keydown', onKeyDown, false);
@@ -128,10 +129,10 @@
       switch(data[0]) {
 
         case 'MOVE':
-          console.log("Receive MOVE event");
-          console.log("MOVE data " + data[1] + ", " + data[2]);
-          self.stickVector.x = data[1];
-          self.stickVector.y = data[2];
+          console.log("MOVE data " + data[1]);
+          
+          if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
+            self.beta = Number(data[1]);
         break;
 
         case 'FORWARD':

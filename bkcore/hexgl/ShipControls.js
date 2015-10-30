@@ -477,6 +477,9 @@ bkcore.hexgl.ShipControls.prototype.update = function(dt)
 			// For touch event
 			angularAmount -= this.tvTunerController.stickVector.x/100 * this.angularSpeed * dt;
 			rollAmount += this.tvTunerController.stickVector.x/100 * this.rollAngle;
+			// For orientation 
+			angularAmount += this.tvTunerController.beta/45 * this.angularSpeed * dt;
+			rollAmount -= this.tvTunerController.beta/45 * this.rollAngle;
 		}
 		else
 		{
@@ -496,6 +499,7 @@ bkcore.hexgl.ShipControls.prototype.update = function(dt)
 			this.speed += this.thrust * dt;
 		else
 			this.speed -= this.airResist * dt;
+
 		if(this.key.ltrigger)
 		{
 			if(this.key.left)

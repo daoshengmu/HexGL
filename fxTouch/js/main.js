@@ -2,29 +2,32 @@
 // TODO: 1. To setup connection while server reload 2. ip insert via app.
 
 function runClient() {
-	var ipAddress = '10.247.35.170';
+	var ipAddress = '10.247.37.144';
 	var port = 8088;
 	var socket = navigator.mozTCPSocket.open(ipAddress, port);
 	var isConnected = false;
 	var connectSocket = null; // replace it with socket?
-	var active = true;
+	var active = false;
 	var stickMargin = 0;
 	var stickID = -1;
 	var stickPos = new Vec2(0, 0);
 	var stickStartPos = new Vec2(0, 0);
 	var stickVector = new Vec2(0, 0);
 
+	var dalpha = null, dbeta = null, dgamma = null;
+	var alpha = null, beta = null, gamma = null;
+
 	socket.ondata = socketOnData;
 	socket.onopen = socketOnOpen;
 	socket.onclose = socketOnClose;
 	socket.onerror = socketOnError;
 
+	window.addEventListener('deviceorientation', function(evt) {
+		deviceOrientation(evt);
+    }, false);
+
 	window.addEventListener('touchstart', function(evt) {
 		touchStart(evt);
-	}, false);
-
-	window.addEventListener('touchmove', function(evt) {
-		touchMove(evt);
 	}, false);
 	  
 	window.addEventListener('touchend', function(evt) {
@@ -69,6 +72,7 @@ function runClient() {
 		console.log("got client open"); 
 		console.log("stickMargin is " + stickMargin);
 		isConnected = true;
+		active = true;
 	}
 
 	var retryConnection = null;
@@ -95,85 +99,49 @@ function runClient() {
 		console.error(evt.data);
 	}
 
-	function touchStart(evt) {
-
-		console.log("touchStart func...");
-		var touch, _i, _len, _ref;
+	function deviceOrientation(evt) {
 		if (!active) {
 			return;
 		}
 
-		_ref = evt.changedTouches;
-		for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-			touch = _ref[_i];
-			if (stickID < 0 && touch.clientX < stickMargin) {
-			  	stickID = touch.identifier;
-			  	stickStartPos.set(touch.clientX, touch.clientY);
-			  	stickPos.copy(stickStartPos);
-			  	stickVector.set(0, 0);
-
-			  	var data = "MOVE," + stickVector.x.toString() + "," + stickVector.y.toString();
-				sendDataToServer(data);
-				continue;
-			} else {
-				var data = "FORWARD," + 1;
-				console.log("Btn clock forward true");
-				sendDataToServer(data);
-			}
+		if (dalpha === null) {
+			dalpha = evt.alpha;
+			dbeta = evt.beta;
+			dgamma = evt.gamma;
 		}
-		touches = evt.touches;
+
+		alpha = evt.alpha - dalpha;
+		beta = evt.beta - dbeta;
+		gamma = evt.gamma - dgamma;
+
+		var data = "MOVE," + beta.toString();
+		console.log("Move data is " + data);
+		sendDataToServer(data);
 		return false;
 	}
 
-	function touchMove(evt) {
-		console.log("touchMove func...");
-		var touch, _i, _len, _ref;
-		evt.preventDefault();
+	function touchStart(evt) {
 
+		console.log("touchStart func...");
 		if (!active) {
 			return;
 		}
-		_ref = evt.changedTouches;
-		for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-			touch = _ref[_i];
-			if (stickID === touch.identifier && touch.clientX < stickMargin) {
-				stickPos.set(touch.clientX, touch.clientY);
-				stickVector.copy(stickPos).substract(stickStartPos);
 
-				var data = "MOVE," + stickVector.x.toString() + "," + stickVector.y.toString();
-				console.log("Move data is " + data);
-				sendDataToServer(data);
-				break;
-			}
-		}
-		touches = evt.touches;
+		var data = "FORWARD," + 1;
+		console.log("Btn clock forward true");
+		sendDataToServer(data);
+
 		return false;
 	}
 
 	function touchEnd(evt) {
 		console.log("touchEnd func...");
-		var touch, _i, _len, _ref;
 		if (!active) {
 			return;
 		}
-		this.touches = evt.touches;
-		_ref = evt.changedTouches;
-		for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-			touch = _ref[_i];
-			if (stickID === touch.identifier) {
-			  	stickID = -1;
-				stickVector.set(0, 0);
-
-				var data = "MOVE," + stickVector.x.toString() + "," + stickVector.y.toString();
-				sendDataToServer(data);
-			  break;
-			 } 
-			 else {
-				var data = "FORWARD," + 0;
-				console.log("Btn clock forward false");
-				sendDataToServer(data);
-			}
-		}
+		var data = "FORWARD," + 0;
+		console.log("Btn clock forward false");
+		sendDataToServer(data);
 
 		return false;
 	}
@@ -184,7 +152,7 @@ function runClient() {
 	}
 
 	function reconnectToServer() {
-		socket = navigator.mozTCPSocket.open('10.247.35.170', 8088);
+		socket = navigator.mozTCPSocket.open(ipAddress, port);
 	}
 }
 
