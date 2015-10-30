@@ -46,7 +46,7 @@
         var data = 'BYE';
         s.send(data);
       });
-
+      isDestroy = false;
       sockets = [];
       socketListener.close();
     }
@@ -139,7 +139,6 @@
 
           if (isDestroy) {
             self.closeConnection();
-            isDestroy = false;
             window.location.reload();
           }
 
