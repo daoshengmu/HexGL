@@ -2,7 +2,7 @@
 // TODO: 1. To setup connection while server reload 2. ip insert via app.
 
 function runClient() {
-	var ipAddress = '10.247.37.144';
+	var ipAddress = document.getElementById('ipAddress').value;
 	var port = 8088;
 	var socket = navigator.mozTCPSocket.open(ipAddress, port);
 	var isConnected = false;
@@ -54,11 +54,12 @@ function runClient() {
 				connectSocket = evt.target;
 				console.log('connect from ' + socket.host);
 				active = true;
+				isConnected = true;
 			break;
 
 			case 'BYE':
 				connectSocket = null;
-				active = false;
+				isConnected = false;
 				socket.close();
 				return;
 			break;
@@ -79,6 +80,10 @@ function runClient() {
 
 	function socketOnClose(evt) {
 		// Retry connnect to server
+		if (!active)
+			return; // Initial connect fail. Don't do retry
+
+		console.log("retry connection......");
 		retryConnection = setInterval( function() {
 		 	retrySocket();			
 		}, 3000 );
@@ -96,11 +101,12 @@ function runClient() {
 	}
 
 	function socketOnError(evt) {
-		console.error(evt.data);
+		console.error(evt.type + ': ' + evt.name);
+		evt.target.close();
 	}
 
 	function deviceOrientation(evt) {
-		if (!active) {
+		if (!isConnected) {
 			return;
 		}
 
@@ -123,7 +129,7 @@ function runClient() {
 	function touchStart(evt) {
 
 		console.log("touchStart func...");
-		if (!active) {
+		if (!isConnected) {
 			return;
 		}
 
@@ -136,7 +142,7 @@ function runClient() {
 
 	function touchEnd(evt) {
 		console.log("touchEnd func...");
-		if (!active) {
+		if (!isConnected) {
 			return;
 		}
 		var data = "FORWARD," + 0;
@@ -147,8 +153,14 @@ function runClient() {
 	}
 
 	function sendDataToServer(data) {
-		if (connectSocket)
+		if (connectSocket) {
+			if (connectSocket.readyState == 'closed') {
+				connectSocket.close();		// Return back to home screen
+				return;
+			}
+
 			connectSocket.send(data);
+		}
 	}
 
 	function reconnectToServer() {
@@ -191,5 +203,6 @@ Vec2 = (function() {
 })();
 
 window.onload = function() {
-	runClient();
+	document.getElementById('enterBtn').onclick = runClient;
 }
+

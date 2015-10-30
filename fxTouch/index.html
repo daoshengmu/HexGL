@@ -4,14 +4,13 @@
   <head>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
     <meta charset="utf-8">
-    <title>Template</title>
-
+    <title>HexGL client</title>
     <style>
       html, body {
         background-size: 100% auto;
         background-repeat: no-repeat;
-        background-color: black;
-        background-image: url(img/touchControl.png);
+        background-color: white;
+       /* background-image: url(img/control.png);*/
       }
     </style>
 
@@ -21,6 +20,9 @@
   <body>
 
     <p id="text"></p>
+    Server IP: <input type="text" id="ipAddress" value="0.0.0.0">
+    <p>Please insert the ip address of the server.</p>
+    <button id="enterBtn">Enter</button>
 
   </body>
 
