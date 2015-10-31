@@ -242,6 +242,7 @@ function NetworkStage(initStage) {
 	var active = false;
 	var self = this;
 	var initialStage = initStage;
+	var retryConnection = null;
 
 	this.logOnInitial = null;
 
@@ -269,6 +270,7 @@ function NetworkStage(initStage) {
 
 				if (retryConnection) {	// clear retry connection.
 					clearInterval(retryConnection);
+					retryConnection = null;
 				}
 
 				connectSocket = evt.target;
@@ -307,13 +309,10 @@ function NetworkStage(initStage) {
 	}
 
 	function socketOnOpen(evt) {
-		//document.getElementById("text").innerHTML = "got client open\n";
 		self.logOnInitial("got client open");
 		isConnected = true;
 		active = true;
 	}
-
-	var retryConnection = null;
 
 	function socketOnClose(evt) {
 		// Retry connnect to server
