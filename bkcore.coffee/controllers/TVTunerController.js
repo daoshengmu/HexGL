@@ -44,7 +44,10 @@
     TVTunerController.prototype.closeConnection = function() {
       sockets.forEach(function(s) {
         var data = 'BYE';
-        s.send(data);
+
+        if (s.readyState !== 'closed') {  // This socket has been closed at somewhere.
+          s.send(data);
+        }
       });
       isDestroy = false;
       sockets = [];

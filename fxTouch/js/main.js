@@ -154,7 +154,7 @@ function runClient() {
 
 	function sendDataToServer(data) {
 		if (connectSocket) {
-			if (connectSocket.readyState == 'closed') {
+			if (connectSocket.readyState === 'closed') {
 				connectSocket.close();		// Return back to home screen
 				return;
 			}
