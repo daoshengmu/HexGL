@@ -318,12 +318,12 @@ bkcore.hexgl.HexGL.prototype.initRenderer = function()
 	this.renderer = renderer;
 	this.manager = new bkcore.threejs.RenderManager(renderer);
 
-	var stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.top = '0px';
+	// var stats = new Stats();
+	// stats.domElement.style.position = 'absolute';
+	// stats.domElement.style.top = '0px';
 
-	this.containers.main.appendChild( stats.domElement );
-	this.stats = stats;
+	//this.containers.main.appendChild( stats.domElement );
+	//this.stats = stats;
 }
 
 bkcore.hexgl.HexGL.prototype.initHUD = function()
