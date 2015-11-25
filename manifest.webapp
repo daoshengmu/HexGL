@@ -2,7 +2,7 @@
 	"name": "HexGL",
 	"description": "HexGL v1.0.1-ffos",
 	"launch_path": "/index.html",
-	"type": "privileged",
+	"type": "certified",
 	"icons": {
 		"32": "/icon_32.png",
 		"64": "/icon_64.png",
@@ -15,6 +15,7 @@
 		"url": "http://bkcore.com"
 	},
 	"permissions" : {
+	  "presentation":{},
 	  "tcp-socket" : {
 	    "description" : "Create TCP sockets and communicate over them."
 	  }

@@ -113,6 +113,20 @@
     };
   }
 
+ // var rec = navigator.presentation.receiver;
+  console.log("check if foreground1...");
+  // Bring the app from background to foreground.
+  if (document.visibilityState === 'hidden') {
+    navigator.mozApps.getSelf().onsuccess = function(evt) {
+      console.log("check if foreground2...");
+      var app = evt.target.result;
+      if (app) {
+        console.log("check if foreground3...");
+        app.launch();
+      }
+    };
+  }
+
   // Jump to the game
   $('step-1').style.display = 'none';
   $('step-2').style.display = 'block';

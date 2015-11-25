@@ -1,18 +1,19 @@
 {
-	"name": "HexGL_Touch",
-	"description": "HexGL touch control in FxOS",
-	"launch_path": "/index.html",
-	"fullscreen": true,
-	"type": "privileged",
-	"developer": {
-		"name": "Daosheng Mu"
-	},
-	"permissions" : {
-	  "tcp-socket" : {
-	    "description" : "Create TCP sockets and communicate over them."
-	  }
-	},
+    "name": "HexGL_Touch",
+    "description": "HexGL touch control in FxOS",
+    "launch_path": "/index.html",
+    "fullscreen": true,
+    "type": "certified",
+    "developer": {
+        "name": "Daosheng Mu"
+    },
+    "permissions" : {
+      "presentation":{},
+      "tcp-socket" : {
+        "description" : "Create TCP sockets and communicate over them."
+      }
+    },
     "installs_allowed_from": ["*"],
-	"default_locale": "en",
-	"orientation": ["landscape"]
+    "default_locale": "en",
+    "orientation": ["landscape"]
 }

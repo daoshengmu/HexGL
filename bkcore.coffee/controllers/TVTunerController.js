@@ -10,11 +10,13 @@
 (function() {
   var TVTunerController, exports, _base;
   var self;
-  var socketListener;
+  // var socketListener;
+  var receiver = null;
 
   TVTunerController = (function() {
 
-    var sockets = [];
+    //var sockets = [];
+    var connections = [];
     var isDestroy = false;
 
     TVTunerController.isCompatible = function() {
@@ -25,6 +27,8 @@
       Creates a new TVTuner
     */
     function TVTunerController(domElement, keyPressCallback) {
+
+      console.log("active TVTunerController.....");
       self = this;
       this.keyPressCallback = keyPressCallback;
       this.stickVector = { x: 0, y: 0 };
@@ -34,7 +38,8 @@
       domElement.addEventListener('keydown', onKeyDown, false);
       domElement.addEventListener('keyup', onKeyUp, false);
 
-      constructSocketListen();
+      //constructPresentationConnection();
+      //constructSocketListen();
     }
 
     TVTunerController.prototype.destroy = function() {
@@ -42,7 +47,7 @@
     }
 
     TVTunerController.prototype.closeConnection = function() {
-      sockets.forEach(function(s) {
+      connections.forEach(function(s) {
         var data = 'BYE';
 
         if (s.readyState !== 'closed') {  // This socket has been closed at somewhere.
@@ -50,8 +55,8 @@
         }
       });
       isDestroy = false;
-      sockets = [];
-      socketListener.close();
+      connections = [];
+     // socketListener.close();
     }
 
     function onKeyDown(event) {
@@ -97,6 +102,86 @@
 
       self.keyPressCallback(this);
     }
+
+    function constructPresentationConnection() {
+      console.log("constructPresentationConnection.....");
+      receiver = navigator.presentation.receiver;
+
+      console.log("success to get receiver.....");
+
+      receiver.getConnection().then(addConnection);
+      receiver.onconnectionavailable = function(evt) {
+        receiver.getConnections().then(function(connections) {
+          addConnection(connections[connections.length-1]);
+        });
+      };
+    }
+
+    function addConnection(connection) {
+
+      var success = "HANDSHAKE,Connect to server success.";
+      console.log("connect success...");
+
+      connection.onstatechange = function () {
+        // connection.state is either 'connected,' 'closed,' or 'terminated'
+        console.log("connection's state is now", connection.state);
+      };
+
+      connection.onmessage = function (evt) {
+        if (typeof evt.data !== 'string') {
+          return;
+        }
+
+        var data = evt.data.split(",");
+        switch(data[0]) {
+
+          case 'MOVE':
+            console.log("MOVE data " + data[1]);
+            
+            if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
+              self.beta = Number(data[1]);
+          break;
+
+          case 'FORWARD':
+            if (isDestroy) {
+              self.closeConnection();
+              window.location.reload();
+            }
+
+            if (data[1] === '1') {
+              console.log("Receive FORWARD event");
+              this.forward = true;
+            }
+            else if (data[1] === '0') {
+              console.log("Receive STOP event");
+              this.forward = false;
+            }
+
+            self.keyPressCallback(this);
+
+          break;
+        }
+      };
+
+      connection.send(success);
+    }
+
+    // // New connection is added.
+    // function connectionAvailable(evt) {
+    //   var success = "HANDSHAKE,Connect to server success.";
+    //   console.log("connect success...");
+
+    //   evt.connection.send(success);
+    //   evt.connection.onmessage = connectionReceive;
+
+    //   receiver.getConnection().then(function(connections)) {
+    //     console.log("The total number of connection is %d ", connections.length);
+    //   });
+    // }
+
+    // function connectionReceive(evt) {
+
+    // }
 
     // Reload window we need to reconnect the connection?
     function constructSocketListen() {
@@ -160,9 +245,9 @@
       }
     }
 
-    function socketClose(evt) {
-      console.log("socket is closed....");
-    }
+    // function socketClose(evt) {
+    //   console.log("socket is closed....");
+    // }
 
     return TVTunerController;
 
