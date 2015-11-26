@@ -38,7 +38,7 @@
       domElement.addEventListener('keydown', onKeyDown, false);
       domElement.addEventListener('keyup', onKeyUp, false);
 
-      //constructPresentationConnection();
+      constructPresentationConnection();
       //constructSocketListen();
     }
 
@@ -107,6 +107,10 @@
       console.log("constructPresentationConnection.....");
       receiver = navigator.presentation.receiver;
 
+      if (typeof receiver == "undefined") {
+        return;
+      }
+
       console.log("success to get receiver.....");
 
       receiver.getConnection().then(addConnection);
@@ -125,6 +129,20 @@
       connection.onstatechange = function () {
         // connection.state is either 'connected,' 'closed,' or 'terminated'
         console.log("connection's state is now", connection.state);
+
+        if (connection.state == 'closed') {
+          // Offer the user a chance to reconnect(), e.g. if there was a
+          // network disruption, or the user wishes to resume control.
+          console.log("closed...");
+        } else if (connection.state == "terminated") {
+          // The presentation has terminated.  Offer the user a chance to
+          // start a new presentation.
+          console.log("terminated...");
+        } else if (connection.state == "connected") {
+          // send initial message to presentation page
+          connection.send("say hello");
+          console.log("connected...");
+        } 
       };
 
       connection.onmessage = function (evt) {
@@ -132,6 +150,7 @@
           return;
         }
 
+        console.log('on message is: ' + evt.data);
         var data = evt.data.split(",");
         switch(data[0]) {
 
@@ -163,7 +182,8 @@
         }
       };
 
-      connection.send(success);
+      if (connection)
+        connection.send(success);
     }
 
     // // New connection is added.
