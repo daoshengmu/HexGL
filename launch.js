@@ -127,9 +127,11 @@
     };
   }
 
-  // Jump to the game
-  $('step-1').style.display = 'none';
-  $('step-2').style.display = 'block';
-  init(5, 1, s[2][3], s[3][3]);
+  // Launched by other device, skip game menu
+  if (navigator.presentation.receiver) {
+    $('step-1').style.display = 'none';
+    $('step-2').style.display = 'block';
+    init(5, 1, s[2][3], s[3][3]);
+  }
 
 }).call(this);
