@@ -61,11 +61,11 @@
         overflow: hidden;
       }
 
-      .initialStage {
+      .connectionStage {
         display: block;
       }
 
-      div.gameStage {
+      div.controllerStage {
         position: absolute;
         top: 0;
         left: 0;
@@ -82,17 +82,21 @@
       }
     </style>
 
+    <script src="js/controller.js"></script>
     <script src="js/main.js"></script>
   </head>
 
   <body>
-    <p class="initialStage unselect title">Server IP: </p>
-    <div id="insertBox">
-      <input class="initialStage resizedTextbox" type="text" id="ipAddress" value="0.0.0.0">
-      <button class="initialStage btn" id="enterBtn">Enter</button>
+    <div id="connectionBox">
+      <p class="connectionStage unselect title">Server IP: </p>
+      <div id="insertBox">
+        <input class="connectionStage resizedTextbox" type="text" id="ipAddress" value="0.0.0.0">
+        <button class="connectionStage btn" id="enterBtn">Enter</button>
+      </div>
+      <p class="connectionStage unselect log" id="text"></p>
     </div>
-    <p class="initialStage unselect log" id="text"></p>
-    <div class="gameStage unselect"></div>
+
+    <div id="controllerBox" class="controllerStage unselect"></div>
   </body>
 
 </html>
