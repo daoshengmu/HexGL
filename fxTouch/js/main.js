@@ -3,7 +3,6 @@
   var gControllerStage = new ControllerStage();
   var gNetworkStage = new NetworkStage();
   var gConn = null;
-  var gRequest = null;
 
   function changeStage(stageName) {
     switch (stageName) {
@@ -35,8 +34,6 @@
 
   // Handle network connection
   function NetworkStage() {
-
-    var presentationConn = null;
 
     function setupConnectionCallback(conn) {
       console.log('setupConnectionCallback...');
@@ -78,42 +75,77 @@
 
     function closeExistedConnection() {
       console.log("closeExistedConnection...");
-      presentationConn && presentationConn.terminate();
+      gConn && gConn.terminate();
     }
 
     function onAvailabilityChange(state) {
       console.log( 'handleAvailabilityChange is ', state);
     }
 
-    this.setupPresentation = function() {
+    this.setupPresentation = function(request) {
       function promiseHandle(resolve, reject) {
-        gRequest = gRequest || new PresentationRequest('app://hexgl.gaiamobile.org/index.html');
+        function tryConnection(request) {
+          request.start()
+            .then((conn) => {
+              console.log("connected");
 
-        gRequest.getAvailability()
+              closeExistedConnection();
+              setupConnectionCallback(conn);
+              gConn = conn;
+
+              resolve(conn);
+            })
+            .catch((exception) => {
+              var errMsg = 'connection error: ' + exception;
+              reject(errMsg);
+            });
+        }
+
+        request.getAvailability()
           .then((availability) => {
             var self = this;
 
             console.log('getAvailability...1');
+            console.log('value: ' + availability.value);
 
-            // Start new presentation.
-            gRequest.start()
+            // if (availability.value == false) {
+            //   reject("Not available");
+            // } else {
+            request.start()
               .then((conn) => {
                 console.log("connected");
 
                 closeExistedConnection();
                 setupConnectionCallback(conn);
-                presentationConn = conn;
                 gConn = conn;
 
                 resolve(conn);
               })
               .catch((exception) => {
                 var errMsg = 'connection error: ' + exception;
-
                 reject(errMsg);
               });
+            // }
 
-            availability.onchange = function() { onAvailabilityChange(this.value); };
+            //availability.onchange = function() { onAvailabilityChange(this.value); };
+            availability.onchange = function() {
+              console.log("changed: " + this.value);
+
+              if (this.value == true) {
+                request.start()
+                  .then((conn) => {
+                    console.log("connected");
+
+                    closeExistedConnection();
+                    setupConnectionCallback(conn);
+                    gConn = conn;
+                  })
+                  .catch((exception) => {
+                    var errMsg = 'connection error: ' + exception;
+                    console.log(errMsg);
+                  });
+              }
+            };
           })
           .catch(() => {
             console.log('getAvailability...2');
@@ -130,22 +162,16 @@
     var dalpha = null, dbeta = null, dgamma = null;
     var alpha = null, beta = null, gamma = null;
 
-    this.init = function() {
-      this._deviceOrientation = this._deviceOrientation.bind(this);
-      this._touchStart = this._touchStart.bind(this);
-      this._touchEnd = this._touchEnd.bind(this);
-    }
-
     this.enter = function() {
-      window.addEventListener('deviceorientation', this._deviceOrientation);
-      window.addEventListener('touchstart', this._touchStart);
-      window.addEventListener('touchend', this._touchEnd);
+      window.addEventListener('deviceorientation', this._deviceOrientation.bind(this));
+      window.addEventListener('touchstart', this._touchStart.bind(this));
+      window.addEventListener('touchend', this._touchEnd.bind(this));
     }
 
     this.exit = function() {
-      window.removeEventListener('deviceorientation', this._deviceOrientation);
-      window.removeEventListener('touchstart', this._touchStart);
-      window.removeEventListener('touchend', this._touchEnd);
+      window.removeEventListener('deviceorientation', this._deviceOrientation.bind(this));
+      window.removeEventListener('touchstart', this._touchStart.bind(this));
+      window.removeEventListener('touchend', this._touchEnd.bind(this));
     }
 
     this._deviceOrientation = function(evt) {
@@ -197,12 +223,11 @@
   };
 
   window.onload = function() {
-    function tryConnect() {
-	    gNetworkStage.setupPresentation()
+    function searchDevice() {
+      gNetworkStage.setupPresentation(request)
         .then((conn) => {
           changeStage("controller");
 
-          gControllerStage.setSendFunc(gConn.send);
           gControllerStage.enter();
 
           console.log("connection success");
@@ -212,10 +237,11 @@
         });
     }
 
-    gControllerStage.init();
+    request = new PresentationRequest('app://hexgl.gaiamobile.org/index.html');
     changeStage("connection");
 
-	  document.getElementById('enterBtn').onclick = tryConnect;
+    document.getElementById('enterBtn').onclick = searchDevice;
+    searchDevice();
   }
 
 }(window));
