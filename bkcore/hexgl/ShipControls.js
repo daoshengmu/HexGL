@@ -368,7 +368,10 @@ bkcore.hexgl.ShipControls.prototype.destroy = function()
 
 	var dom = this.dom;
 	var tvTunerController = this.tvTunerController;
-	tvTunerController.destroy();
+
+	if (tvTunerController != null) {
+		tvTunerController.destroy();
+	}
 	
 	function destroyKeyDown(event) {
 		switch(event.keyCode)

@@ -111,7 +111,7 @@
         return;
       }
 
-      console.log("success to get receiver.....");
+      console.log("success to get presentation receiver.....");
 
       receiver.getConnection().then(addConnection);
       receiver.onconnectionavailable = function(evt) {

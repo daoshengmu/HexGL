@@ -10,8 +10,8 @@
     var hexGL, progressbar;
     hexGL = new bkcore.hexgl.HexGL({
       document: document,
-      width: 1280,
-      height: 720,
+      width: window.innerWidth > 1280 ? 1280 : window.innerWidth,
+      height: window.innerHeight > 720 ? 720 : window.innerHeight,
       container: $('main'),
       overlay: $('overlay'),
       gameover: $('step-5'),
@@ -46,7 +46,7 @@
 
   defaultControls = bkcore.Utils.isTouchDevice() ? 1 : 0;
 
-  s = [['controlType', ['KEYBOARD', 'TOUCH', 'LEAP MOTION CONTROLLER', 'GAMEPAD', 'Orientation', 'TVTUNER'], defaultControls, defaultControls, 'Controls: '], ['quality', ['LOW', 'MID', 'HIGH', 'VERY HIGH'], 3, 3, 'Quality: '], ['hud', ['OFF', 'ON'], 1, 1, 'HUD: '], ['godmode', ['OFF', 'ON'], 0, 1, 'Godmode: ']];
+  s = [['controlType', ['KEYBOARD', 'TOUCH', 'LEAP MOTION CONTROLLER', 'GAMEPAD', 'Orientation', 'TVTUNER'], defaultControls, defaultControls, 'Controls: '], ['quality', ['LOW', 'MID', 'HIGH', 'VERY HIGH'], 1, 1, 'Quality: '], ['hud', ['OFF', 'ON'], 1, 1, 'HUD: '], ['godmode', ['OFF', 'ON'], 0, 1, 'Godmode: ']];
 
   _fn = function(a) {
     var e, f, _ref;
@@ -113,7 +113,6 @@
     };
   }
 
- // var rec = navigator.presentation.receiver;
   console.log("check if foreground1...");
   // Bring the app from background to foreground.
   if (document.visibilityState === 'hidden') {
