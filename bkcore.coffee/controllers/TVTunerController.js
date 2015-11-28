@@ -10,12 +10,10 @@
 (function() {
   var TVTunerController, exports, _base;
   var self;
-  // var socketListener;
   var receiver = null;
 
   TVTunerController = (function() {
 
-    //var sockets = [];
     var connections = [];
     var isDestroy = false;
 
@@ -39,7 +37,6 @@
       domElement.addEventListener('keyup', onKeyUp, false);
 
       constructPresentationConnection();
-      //constructSocketListen();
     }
 
     TVTunerController.prototype.destroy = function() {
@@ -56,7 +53,6 @@
       });
       isDestroy = false;
       connections = [];
-     // socketListener.close();
     }
 
     function onKeyDown(event) {
@@ -164,7 +160,10 @@
           case 'FORWARD':
             if (isDestroy) {
               self.closeConnection();
-              window.location.reload();
+              //window.location.reload();
+              document.getElementById('step-4').style.display = 'block';
+              document.getElementById('step-5').style.display = 'none';
+              window.hexGL.restart();
             }
 
             if (data[1] === '1') {
@@ -203,67 +202,67 @@
 
     // }
 
-    // Reload window we need to reconnect the connection?
-    function constructSocketListen() {
-      socketListener = navigator.mozTCPSocket.listen(8088);
+    // // Reload window we need to reconnect the connection?
+    // function constructSocketListen() {
+    //   socketListener = navigator.mozTCPSocket.listen(8088);
 
-      socketListener.onconnect = socketConnect;
-     // socketListener.onclose = socketClose;  // No onclose on TV
-    }
+    //   socketListener.onconnect = socketConnect;
+    //  // socketListener.onclose = socketClose;  // No onclose on TV
+    // }
 
-    function socketConnect(evt) {
-      var success = "HANDSHAKE,Connect to server success.";
+    // function socketConnect(evt) {
+    //   var success = "HANDSHAKE,Connect to server success.";
 
-      console.log("connect success...");
+    //   console.log("connect success...");
 
-      if (evt.socket !== undefined) {
-        sockets.push(evt.socket);
-        evt.socket.send(success);
-        evt.socket.ondata = socketReceive;
-      } 
-      else {  // On TV b2g 2.2, socket is undefined.
-        sockets.push(evt);
-        evt.send(success);
-        evt.ondata = socketReceive;
-      }
-    }
+    //   if (evt.socket !== undefined) {
+    //     sockets.push(evt.socket);
+    //     evt.socket.send(success);
+    //     evt.socket.ondata = socketReceive;
+    //   } 
+    //   else {  // On TV b2g 2.2, socket is undefined.
+    //     sockets.push(evt);
+    //     evt.send(success);
+    //     evt.ondata = socketReceive;
+    //   }
+    // }
 
-    function socketReceive(evt) {
-      if (typeof evt.data !== 'string') {
-        return;
-      }
+    // function socketReceive(evt) {
+    //   if (typeof evt.data !== 'string') {
+    //     return;
+    //   }
 
-      var data = evt.data.split(",");
-      switch(data[0]) {
+    //   var data = evt.data.split(",");
+    //   switch(data[0]) {
 
-        case 'MOVE':
-          console.log("MOVE data " + data[1]);
+    //     case 'MOVE':
+    //       console.log("MOVE data " + data[1]);
           
-          if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
-            self.beta = Number(data[1]);
-        break;
+    //       if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
+    //         self.beta = Number(data[1]);
+    //     break;
 
-        case 'FORWARD':
+    //     case 'FORWARD':
 
-          if (isDestroy) {
-            self.closeConnection();
-            window.location.reload();
-          }
+    //       if (isDestroy) {
+    //         self.closeConnection();
+    //         window.location.reload();
+    //       }
 
-          if (data[1] === '1') {
-            console.log("Receive FORWARD event");
-            this.forward = true;
-          }
-          else if (data[1] === '0') {
-            console.log("Receive STOP event");
-            this.forward = false;
-          }
+    //       if (data[1] === '1') {
+    //         console.log("Receive FORWARD event");
+    //         this.forward = true;
+    //       }
+    //       else if (data[1] === '0') {
+    //         console.log("Receive STOP event");
+    //         this.forward = false;
+    //       }
 
-          self.keyPressCallback(this);
+    //       self.keyPressCallback(this);
 
-        break;
-      }
-    }
+    //     break;
+    //   }
+    // }
 
     // function socketClose(evt) {
     //   console.log("socket is closed....");

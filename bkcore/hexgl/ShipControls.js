@@ -171,16 +171,16 @@ bkcore.hexgl.ShipControls = function(ctx)
 	else if(ctx.controlType == 3 && bkcore.controllers.GamepadController.isCompatible())
 	{
 		this.gamepadController = new bkcore.controllers.GamepadController(
-      function(controller){
-        if (controller.select)
-          ctx.restart();
-        else
-          self.key.forward = controller.acceleration > 0;
-          self.key.ltrigger = controller.ltrigger > 0;
-          self.key.rtrigger = controller.rtrigger > 0;
-          self.key.left = controller.lstickx < -0.1;
-          self.key.right = controller.lstickx > 0.1;
-      });
+		function(controller){
+		if (controller.select)
+		  ctx.restart();
+		else
+		  self.key.forward = controller.acceleration > 0;
+		  self.key.ltrigger = controller.ltrigger > 0;
+		  self.key.rtrigger = controller.rtrigger > 0;
+		  self.key.left = controller.lstickx < -0.1;
+		  self.key.right = controller.lstickx > 0.1;
+		});
 	}
 	else if(ctx.controlType == 2)
 	{

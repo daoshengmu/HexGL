@@ -28,6 +28,18 @@
         left: 0;
         width: 100%;
       }
+      div.controllerStage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("fxTouch/img/control.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+        display: none;
+        background-color: black;
+      }
     </style>
     <script type="text/javascript">
 
@@ -89,6 +101,7 @@
       <p><b>Track texture</b><br>Nobiax</p>
       <h4>Click anywhere to continue.</h3>
     </div>
+    <div id="controllerBox" class="controllerStage" style="display: none"></div>
 
     <div id="leapinfo" style="display: none"></div>
 
@@ -131,6 +144,7 @@
 
     <script src="bkcore/hexgl/HexGL.js"></script>
 
+    <script src="fxTouch/js/main.js"></script>
     <script src="launch.js"></script>
 
   </body>

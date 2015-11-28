@@ -20,6 +20,7 @@ bkcore.hexgl.HexGL = function(opts)
 	this.a = window.location.href;
 
 	this.active = true;
+	this.requestId = undefined;
 	this.displayHUD = opts.hud == undefined ? true : opts.hud;
 	this.width = opts.width == undefined ? window.innerWidth : opts.width;
 	this.height = opts.height == undefined ? window.innerHeight : opts.height;
@@ -100,7 +101,7 @@ bkcore.hexgl.HexGL.prototype.start = function()
 
 	function raf()
 	{
-		if(self && self.active) requestAnimationFrame( raf );
+		if(self && self.active) self.requestId = requestAnimationFrame( raf );
 		self.update();
 	}
 
@@ -120,6 +121,20 @@ bkcore.hexgl.HexGL.prototype.reset = function()
 	bkcore.Audio.volume('wind', 0.35);
 	bkcore.Audio.play('bg');
 	bkcore.Audio.play('wind');
+}
+
+bkcore.hexgl.HexGL.prototype.terminate = function()
+{
+	this.manager.get('game').objects.lowFPS = 0;
+	this.gameplay.end();
+
+	bkcore.Audio.stop('bg');
+	bkcore.Audio.stop('wind');
+
+	if (this.requestId) {
+       cancelAnimationFrame(this.requestId);
+       this.requestId = undefined;
+    }
 }
 
 bkcore.hexgl.HexGL.prototype.restart = function()

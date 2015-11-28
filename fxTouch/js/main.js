@@ -19,8 +19,8 @@
     case "controller":
       var selectedDiv;
 
-      selectedDiv = document.getElementById('connectionBox');
-      selectedDiv.style.display = 'none';
+      // selectedDiv = document.getElementById('connectionBox');
+      // selectedDiv.style.display = 'none';
 
       selectedDiv = document.getElementById('controllerBox');
       selectedDiv.style.display = 'block';
@@ -39,6 +39,20 @@
       console.log('setupConnectionCallback...');
 
       if (conn) {
+
+        if (window.hexGL) {
+          window.hexGL.terminate();
+        }
+
+        document.getElementById('step-1').style.display = 'none';
+        document.getElementById('step-2').style.display = 'none';
+        document.getElementById('step-3').style.display = 'none';
+        document.getElementById('step-4').style.display = 'none';
+        document.getElementById('step-5').style.display = 'none';
+
+        changeStage("controller");
+        gControllerStage.enter();
+      
         conn.onstatechange = function() {
           switch (conn.state) {
           case "closed":
@@ -223,12 +237,16 @@
   };
 
   window.onload = function() {
+
+    console.log('fxos touch onload....');
     function searchDevice() {
       gNetworkStage.setupPresentation(request)
         .then((conn) => {
-          changeStage("controller");
+         // window.location = 'fxTouch/index.html';
 
-          gControllerStage.enter();
+          // changeStage("controller");
+
+          // gControllerStage.enter();
 
           console.log("connection success");
         })
@@ -238,9 +256,9 @@
     }
 
     request = new PresentationRequest('app://hexgl.gaiamobile.org/index.html');
-    changeStage("connection");
+   // changeStage("connection");
 
-    document.getElementById('enterBtn').onclick = searchDevice;
+   // document.getElementById('enterBtn').onclick = searchDevice;
     searchDevice();
   }
 
