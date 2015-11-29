@@ -6,21 +6,8 @@
 
   function changeStage(stageName) {
     switch (stageName) {
-    case "connection":
-      var selectedDiv;
-
-      selectedDiv = document.getElementById('connectionBox');
-      selectedDiv.style.display = 'block';
-
-      selectedDiv = document.getElementById('controllerBox');
-      selectedDiv.style.display = 'none';
-
-      break;
     case "controller":
       var selectedDiv;
-
-      // selectedDiv = document.getElementById('connectionBox');
-      // selectedDiv.style.display = 'none';
 
       selectedDiv = document.getElementById('controllerBox');
       selectedDiv.style.display = 'block';
@@ -52,21 +39,17 @@
 
         changeStage("controller");
         gControllerStage.enter();
-      
+
         conn.onstatechange = function() {
           switch (conn.state) {
           case "closed":
             console.log("closed...");
-
             gControllerStage.exit();
-            changeStage("connection");
             break;
 
           case "terminated":
             console.log("terminated...");
-
             gControllerStage.exit();
-            changeStage("connection");
             break;
 
           case "connected":
@@ -118,9 +101,7 @@
         request.getAvailability()
           .then((availability) => {
             var self = this;
-
-            console.log('getAvailability...1');
-            console.log('value: ' + availability.value);
+            console.log('availability value: ' + availability.value);
 
             // if (availability.value == false) {
             //   reject("Not available");
@@ -141,7 +122,6 @@
               });
             // }
 
-            //availability.onchange = function() { onAvailabilityChange(this.value); };
             availability.onchange = function() {
               console.log("changed: " + this.value);
 
@@ -238,16 +218,9 @@
 
   window.onload = function() {
 
-    console.log('fxos touch onload....');
     function searchDevice() {
       gNetworkStage.setupPresentation(request)
         .then((conn) => {
-         // window.location = 'fxTouch/index.html';
-
-          // changeStage("controller");
-
-          // gControllerStage.enter();
-
           console.log("connection success");
         })
         .catch((err) => {
@@ -255,10 +228,7 @@
         });
     }
 
-    request = new PresentationRequest('app://hexgl.gaiamobile.org/index.html');
-   // changeStage("connection");
-
-   // document.getElementById('enterBtn').onclick = searchDevice;
+    var request = new PresentationRequest('app://hexgl.gaiamobile.org/index.html');
     searchDevice();
   }
 

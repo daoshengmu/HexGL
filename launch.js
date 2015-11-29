@@ -113,14 +113,11 @@
     };
   }
 
-  console.log("check if foreground1...");
   // Bring the app from background to foreground.
   if (document.visibilityState === 'hidden') {
     navigator.mozApps.getSelf().onsuccess = function(evt) {
-      console.log("check if foreground2...");
       var app = evt.target.result;
       if (app) {
-        console.log("check if foreground3...");
         app.launch();
       }
     };

@@ -146,14 +146,11 @@
           return;
         }
 
-        console.log('on message is: ' + evt.data);
         var data = evt.data.split(",");
         switch(data[0]) {
 
           case 'MOVE':
-            console.log("MOVE data " + data[1]);
-            
-            if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
+            if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter it.
               self.beta = Number(data[1]);
           break;
 
@@ -161,6 +158,8 @@
             if (isDestroy) {
               self.closeConnection();
               isDestroy = false;
+
+              // Return to game start.
               window.hexGL.terminate();
               window.hexGL.active = true;
               window.hexGL.components.shipControls.destroyed = false;
@@ -174,11 +173,9 @@
             }
 
             if (data[1] === '1') {
-              console.log("Receive FORWARD event");
               this.forward = true;
             }
             else if (data[1] === '0') {
-              console.log("Receive STOP event");
               this.forward = false;
             }
 
@@ -191,89 +188,6 @@
       if (connection)
         connection.send(success);
     }
-
-    // // New connection is added.
-    // function connectionAvailable(evt) {
-    //   var success = "HANDSHAKE,Connect to server success.";
-    //   console.log("connect success...");
-
-    //   evt.connection.send(success);
-    //   evt.connection.onmessage = connectionReceive;
-
-    //   receiver.getConnection().then(function(connections)) {
-    //     console.log("The total number of connection is %d ", connections.length);
-    //   });
-    // }
-
-    // function connectionReceive(evt) {
-
-    // }
-
-    // // Reload window we need to reconnect the connection?
-    // function constructSocketListen() {
-    //   socketListener = navigator.mozTCPSocket.listen(8088);
-
-    //   socketListener.onconnect = socketConnect;
-    //  // socketListener.onclose = socketClose;  // No onclose on TV
-    // }
-
-    // function socketConnect(evt) {
-    //   var success = "HANDSHAKE,Connect to server success.";
-
-    //   console.log("connect success...");
-
-    //   if (evt.socket !== undefined) {
-    //     sockets.push(evt.socket);
-    //     evt.socket.send(success);
-    //     evt.socket.ondata = socketReceive;
-    //   } 
-    //   else {  // On TV b2g 2.2, socket is undefined.
-    //     sockets.push(evt);
-    //     evt.send(success);
-    //     evt.ondata = socketReceive;
-    //   }
-    // }
-
-    // function socketReceive(evt) {
-    //   if (typeof evt.data !== 'string') {
-    //     return;
-    //   }
-
-    //   var data = evt.data.split(",");
-    //   switch(data[0]) {
-
-    //     case 'MOVE':
-    //       console.log("MOVE data " + data[1]);
-          
-    //       if (!isNaN(data[1]))  // deviceOrientation have some noise. To filter.
-    //         self.beta = Number(data[1]);
-    //     break;
-
-    //     case 'FORWARD':
-
-    //       if (isDestroy) {
-    //         self.closeConnection();
-    //         window.location.reload();
-    //       }
-
-    //       if (data[1] === '1') {
-    //         console.log("Receive FORWARD event");
-    //         this.forward = true;
-    //       }
-    //       else if (data[1] === '0') {
-    //         console.log("Receive STOP event");
-    //         this.forward = false;
-    //       }
-
-    //       self.keyPressCallback(this);
-
-    //     break;
-    //   }
-    // }
-
-    // function socketClose(evt) {
-    //   console.log("socket is closed....");
-    // }
 
     return TVTunerController;
 
