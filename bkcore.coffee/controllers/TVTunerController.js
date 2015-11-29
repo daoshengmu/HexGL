@@ -160,10 +160,17 @@
           case 'FORWARD':
             if (isDestroy) {
               self.closeConnection();
-              //window.location.reload();
+              isDestroy = false;
+              window.hexGL.terminate();
+              window.hexGL.active = true;
+              window.hexGL.components.shipControls.destroyed = false;
+              window.hexGL.components.shipControls.falling = false;
+              window.hexGL.components.shipControls.active = true;
+              var gameplay = window.hexGL.gameplay;
+              window.hexGL.components.shipControls.reset(gameplay.track.spawn, gameplay.track.spawnRotation);
+              window.hexGL.start();
               document.getElementById('step-4').style.display = 'block';
               document.getElementById('step-5').style.display = 'none';
-              window.hexGL.restart();
             }
 
             if (data[1] === '1') {

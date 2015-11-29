@@ -94,7 +94,6 @@ bkcore.hexgl.HexGL = function(opts)
 
 bkcore.hexgl.HexGL.prototype.start = function()
 {
-
 	this.manager.setCurrent("game");
 
 	var self = this;
